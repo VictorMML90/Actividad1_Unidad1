@@ -6,37 +6,55 @@ class WebRequestHandler(BaseHTTPRequestHandler):
     def url(self):
         return urlparse(self.path)
 
-    def query_data(self):
-        return dict(parse_qsl(self.url().query))
+    #def query_data(self):
+      #  return dict(parse_qsl(self.url().query))
 
     def do_GET(self):
-        if self.valida_request():
-            self.send_response(200)
-            self.send_header("Content-Type", "text/html")
-            self.end_headers()
-            self.wfile.write(self.get_html(self.url().path, self.query_data()).encode("utf-8")) 
-        else: 
-            self.send_error(404, 'El autor no existe')
 
+        if self.url().path == "/":
+            try:
+                with open("home.html", "r", encoding = "utf-8") as f:
+                 contenido = f.read()
 
-    def valida_request(self):
-        if 'autor'in self.query_data():
-            return True
+                self.send_response(200)
+                self.send_header("Content-Type", "text/html")
+                self.end_headers()
+                self.wfile.write(contenido.encode("utf-8"))
+            
+            except FileNotFoundError:
+                self.send_error(404,"Archivo home.html no se ha encontrado")
         else:
-            return False    
+            self.send_error(404,"Ruta no encontrada")
         
-    def get_html(self, path, qs):
-        return f"""
-        <h1>Proyecto: {path} Autor: {qs['autor']} </h1>
-"""
-    def get_response(self):
-        return f"""
-    <h1> Hola Web </h1>
-    <p> URL Parse Result : {self.url()}         </p>
-    <p> Path Original: {self.path}         </p>
-    <p> Headers: {self.headers}      </p>
-    <p> Query: {self.query_data()}   </p>
-"""
+        
+        #if self.valida_request():
+         #   self.send_response(200)
+          #  self.send_header("Content-Type", "text/html")
+           # self.end_headers()
+            #self.wfile.write(self.get_html(self.url().path, self.query_data()).encode("utf-8")) 
+        #else: 
+         #   self.send_error(404, 'El autor no existe')
+        
+
+
+    #def valida_request(self):
+     #   if 'autor'in self.query_data():
+      #      return True
+       # else:
+        #    return False    
+        
+    #def get_html(self, path, qs):
+     #   return f"""
+      #  <h1>Proyecto: {path} Autor: {qs['autor']} </h1>
+
+    #def get_response(self):
+     #   return f"""
+    #<h1> Hola Web </h1>
+    #<p> URL Parse Result : {self.url()}         </p>
+    #<p> Path Original: {self.path}         </p>
+    #<p> Headers: {self.headers}      </p>
+    #<p> Query: {self.query_data()}   </p>
+
 
 
 if __name__ == "__main__":
